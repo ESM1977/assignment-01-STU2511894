@@ -1,22 +1,42 @@
 ## Anomaly Analysis
 
-### Insert Anomaly
-In the `orders_flat.csv`, it is not possible to insert a new product or customer without creating an order entry. For example, if a new product (e.g., Product_ID: P106, Product_Name: Tablet) needs to be added but no order has been placed yet, there is no place to store it independently. This shows an **insert anomaly**, as product data depends on order data.
+### 1. Insert Anomaly
+It is an anomaly which occurs when we cannot add any new information without including redundant data.
 
-### Update Anomaly
-Customer details such as `customer_name` and `city` are repeated across multiple rows. For instance, if "Rahul Sharma" from "Mumbai" appears in multiple records and his city changes to "Pune", all rows must be updated. If even one row is missed, it leads to inconsistent data. This is an **update anomaly** caused by redundancy.
+- For example: If we wish to add a new product, it cannot be added independently alone unless a full order row is created.
+- Example reference: 
+**Row 11** (`order_id = ORD1162`)
+- Relevant columns: `product_id`, `product_name`, `category`, `unit_price` are saved with order-specific columns such as `order_id`, `customer_id`, `quantity`, `order_date`, and `sales_rep_id`.
 
-### Delete Anomaly
-If a particular order is deleted, important information may be lost. For example, deleting the only order containing Product_ID: P105 may also remove all details of that product from the dataset. This results in a **delete anomaly**, where deleting one record unintentionally removes other valuable information.
+So, if the company wish to add new product details like `P009` before any customer has ordered it, it cannot add without inventory order data such as an `order_id`, `customer_id`, `quantity`, and `order_date`.
 
----
+### 2. Update Anomaly
+An update anomaly occurs when we are changing one set of information then it requires multiple updates across rows, thus adding inconsistency. 
 
-## Normalization Justification
+- For example: As we can see that Customer details are repeated in multiple rows, so when we make a single change must then it must be updated at many places.
+- Example reference:
+  - **Row 1** (`ORD1027`)
+  - **Row 4** (`ORD1002`)
+  - **Row 7** (`ORD1037`)
+- Relevant columns: `customer_id`, `customer_name`, `customer_email`, `customer_city`
 
-While keeping all data in a single table may appear simple, it leads to redundancy and data inconsistency. In the `orders_flat.csv`, customer details like `customer_name` and `city` are repeated across multiple rows whenever the same customer places multiple orders. This duplication increases storage and creates maintenance issues.
+These all rows store the same customer data:
+- `customer_id = C002`
+- `customer_name = Priya Sharma`
+- `customer_email = priya@gmail.com`
+- `customer_city = Delhi`
 
-For instance, if a customer’s city needs to be updated, it must be modified in every related row. Missing even one update results in an **update anomaly**, causing inconsistent data. Similarly, adding a new product without an associated order is not possible, leading to an **insert anomaly**. Deleting an order may also remove important information about a customer or product, resulting in a **delete anomaly**.
+If Priya Sharma’s email or city changes, then every row containing `C002` must be updated. If any one row is missed, the database will become inconsistent.
 
-Normalization to Third Normal Form (3NF) resolves these issues by separating data into logical tables such as Customers, Orders, Products, and Sales Representatives. Each table contains only relevant attributes, and relationships are maintained using primary and foreign keys. This eliminates redundancy and ensures data integrity.
+### 3. Delete Anomaly
+A delete anomaly occurs when we delete a record that causes unintended loss of other valuable information
+- For example: If we Delete an order, then it can also delete the information about a product too.
 
-Although normalization introduces multiple tables, it improves consistency, scalability, and ease of maintenance. Therefore, normalization is not over-engineering but a necessary design approach for building reliable and efficient database systems.
+- Example reference: **Row 12** (`order_id = ORD1185`)
+- Relevant columns: `product_id`, `product_name`, `category`, `unit_price`
+
+This is the only row consisting the following product details
+- `product_id = P008`
+- `product_name = Webcam`
+
+If this row is deleted because the order was removed, the company also loses all stored information about product `P008`, even though the product itself may still exist in the catalog.
