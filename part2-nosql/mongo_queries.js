@@ -74,10 +74,10 @@ db.products.insertMany([
     manufacturing_date: new Date("2026-03-18"),
     weight: {
       value: 400,
-      unit: "g"
+      unit: "gms"
     },
     nutritional_info: {
-      serving_size: "100g",
+      serving_size: "100gms",
       calories: 247,
       protein_g: 9.8,
       carbohydrates_g: 41.2,
