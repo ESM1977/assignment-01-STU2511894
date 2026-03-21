@@ -2,8 +2,8 @@
 -- Q1: Total sales revenue by product category for each month
 
 SELECT  
-    d.year,
-    d.month, 
+    d.year_num,
+    d.month_num, 
     p.category, 
     SUM(f.total_revenue) AS total_revenue 
 FROM fact_sales f 
@@ -26,8 +26,8 @@ LIMIT 2;
 -- Q3: Month-over-month sales trend across all stores
 
 SELECT  
-    d.year, 
-    d.month, 
+    d.year_num, 
+    d.month_num, 
     SUM(f.total_revenue) AS total_sales,
     LAG(SUM(f.total_revenue)) OVER (ORDER BY d.year, d.month) AS prev_month_sales,
     (SUM(f.total_revenue) - LAG(SUM(f.total_revenue)) OVER (ORDER BY d.year, d.month)) / LAG(SUM(f.total_revenue)) OVER (ORDER BY d.year, d.month) * 100 AS mom_growth_pct
