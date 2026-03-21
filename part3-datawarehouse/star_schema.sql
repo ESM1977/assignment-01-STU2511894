@@ -1,23 +1,24 @@
--- =========================
--- DROP TABLES (optional but recommended)
--- =========================
+
+-- DROP TABLES (optional)
+
 DROP TABLE IF EXISTS fact_sales;
 DROP TABLE IF EXISTS dim_date;
 DROP TABLE IF EXISTS dim_store;
 DROP TABLE IF EXISTS dim_product;
 
--- =========================
+
 -- DIMENSION TABLES
--- =========================
 
 CREATE TABLE dim_date (
-    date_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    full_date DATE NOT NULL,
-    year INT NOT NULL,
-    quarter INT NOT NULL,
-    month INT NOT NULL,
-    day INT NOT NULL
+    date_id INTEGER PRIMARY KEY,
+    full_date TEXT NOT NULL UNIQUE,
+    day_of_month INTEGER NOT NULL,
+    month_num INTEGER NOT NULL,
+    month_name TEXT NOT NULL,
+    quarter_num INTEGER NOT NULL,
+    year_num INTEGER NOT NULL
 );
+
 
 CREATE TABLE dim_store (
     store_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,33 +45,22 @@ CREATE TABLE fact_sales (
     FOREIGN KEY (product_id) REFERENCES dim_product(product_id)
 );
 
--- =========================
 -- 2. INSERT dim_date (cleaned unique dates from CSV)
--- =========================
 
-INSERT INTO dim_date (full_date, year, quarter, month, day) VALUES
-('2023-08-29', 2023, 3, 8, 29),
-('2023-12-12', 2023, 4, 12, 12),
-('2023-02-05', 2023, 1, 2, 5),
-('2023-02-20', 2023, 1, 2, 20),
-('2023-01-15', 2023, 1, 1, 15),
-('2023-08-09', 2023, 3, 8, 9),
-('2023-03-31', 2023, 1, 3, 31),
-('2023-10-26', 2023, 4, 10, 26),
-('2023-12-08', 2023, 4, 12, 8),
-('2023-08-15', 2023, 3, 8, 15),
-('2023-06-04', 2023, 2, 6, 4),
-('2023-10-20', 2023, 4, 10, 20),
-('2023-05-21', 2023, 2, 5, 21),
-('2023-04-28', 2023, 2, 4, 28),
-('2023-11-18', 2023, 4, 11, 18),
-('2023-01-18', 2023, 1, 1, 18),
-('2023-08-01', 2023, 3, 8, 1),
-('2023-05-12', 2023, 2, 5, 12);
+INSERT INTO dim_date VALUES
+(20230115, '2023-01-15', 15, 1, 'January', 1, 2023),
+(20230205, '2023-02-05', 5, 2, 'February', 1, 2023),
+(20230220, '2023-02-20', 20, 2, 'February', 1, 2023),
+(20230331, '2023-03-31', 31, 3, 'March', 1, 2023),
+(20230809, '2023-08-09', 9, 8, 'August', 3, 2023),
+(20230815, '2023-08-15', 15, 8, 'August', 3, 2023),
+(20230829, '2023-08-29', 29, 8, 'August', 3, 2023),
+(20231026, '2023-10-26', 26, 10, 'October', 4, 2023),
+(20231208, '2023-12-08', 8, 12, 'December', 4, 2023),
+(20231212, '2023-12-12', 12, 12, 'December', 4, 2023);
 
--- =========================
+
 -- 3. INSERT dim_store (cleaned unique from CSV)
--- =========================
 
 INSERT INTO dim_store (store_name, city, state) VALUES
 ('Chennai Anna', 'Chennai', 'Tamil Nadu'),
@@ -79,9 +69,9 @@ INSERT INTO dim_store (store_name, city, state) VALUES
 ('Pune FC Road', 'Pune', 'Maharashtra'),
 ('Mumbai Central', 'Mumbai', 'Maharashtra');
 
--- =========================
+
 -- 4. INSERT dim_product (cleaned unique from CSV, normalized categories)
--- =========================
+
 
 INSERT INTO dim_product (product_name, category) VALUES
 ('Speaker', 'Electronics'),
@@ -100,9 +90,9 @@ INSERT INTO dim_product (product_name, category) VALUES
 ('T-Shirt', 'Clothing'),
 ('Rice 5kg', 'Grocery');
 
--- =========================
+
 -- 5. INSERT fact_sales (>=20 rows cleaned sample data from CSV)
--- =========================
+
 -- Note: FKs based on INSERT order (date_id 1=2023-08-29 Chennai Anna Speaker, etc.)
 -- Revenue = units_sold * unit_price
 
@@ -130,4 +120,7 @@ INSERT INTO fact_sales (date_id, store_id, product_id, quantity, total_revenue) 
 (21, 2, 2, 14, 325165.68),-- TXN5066 Delhi Tablet (extra for coverage)
 (22, 3, 9, 20, 846862.00); -- TXN5049 Pune Laptop (extra)
 
-select * from dim_product
+select * from dim_date;
+select * from dim_store;
+select * from dim_product;
+select * from fact_sales;
