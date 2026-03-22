@@ -1,33 +1,27 @@
 ## Storage Systems
 
-To meet the hospital network’s four goals, a combination of specialized storage systems is required.
+To build an AI-powered data system with four goals of a hospital architecture, I selected different storage systems because each goal has different data and performance needs.
 
-For **predicting patient readmission risk**, a **Data Warehouse (OLAP system)** is ideal. Historical treatment data needs to be structured, cleaned, and aggregated for machine learning models. A warehouse ensures high-quality, consistent data for accurate predictions.
+For **predicting patient readmission risk**, **data lake/lakehouse** and the **relational data warehouse (OLAP)** is used. The lakehouse stores raw and cleaned historical treatment data from EHR, labs, and billing systems. The warehouse stores structured and reporting-ready data that can be used for model features and business analysis. This is useful because machine learning models need large volumes of historical data, but also benefit from cleaned and organized datasets.
 
-For **natural language querying of patient history**, a **Vector Database** should be used alongside a traditional database. Patient records can be embedded into vectors, allowing doctors to search using plain English queries. This enables semantic understanding rather than exact keyword matching.
+For **natural language doctor queries on patient history**, I would use a **vector database**. Patient notes, discharge summaries, event history, and clinical text can be converted into embeddings and stored in the vector database. This allows semantic search, so a question like “Has this patient had a cardiac event before?” can return relevant meaning-based results rather than just exact keyword matches.
 
-For **monthly reporting (bed occupancy, costs)**, again a **Data Warehouse** is suitable. It supports analytical queries, aggregations, and business intelligence dashboards efficiently.
+For **monthly management reports(bed occupancy, costs)** such as bed occupancy and department-wise costs, I would use a **relational data warehouse**. This is the best choice for OLAP-style reporting because it supports structured schemas, aggregation, trends, and dashboard queries efficiently.
 
-For **real-time ICU vitals streaming**, a **Data Lake or Time-Series Database** is recommended. These systems can handle high-velocity streaming data and store raw, unstructured sensor inputs for real-time monitoring and future analysis.
-
----
+For **real-time ICU vitals**, I would use a **time-series database** along with **real-time ingestion**. ICU devices generate continuous streams of timestamped data, and a time-series database is better than a normal relational database for storing and querying this kind of fast, frequent sensor data.
 
 ## OLTP vs OLAP Boundary
 
-The **OLTP system** includes real-time operational databases such as patient records, appointment systems, and ICU monitoring systems. These systems handle frequent inserts, updates, and transactions with low latency.
+In this design, the **transactional system (OLTP)** ends at the hospital’s operational systems such as **EHR/EMR, lab systems, billing systems, and ICU monitoring systems**. These systems are responsible for recording day-to-day transactions such as diagnoses, medication updates, lab entries, admissions, discharges, and billing activity.
 
-The **OLAP system** begins where data is extracted from OLTP systems and moved into analytical storage like a Data Warehouse or Data Lake. This is typically done through ETL/ELT pipelines. Once data is transformed and stored in analytical systems, it is used for reporting, dashboards, and machine learning.
+The **analytical system (OLAP)** begins after data is extracted through batch ETL or real-time ingestion pipelines and moved into the **lakehouse, warehouse, vector database, and time-series database**. At this stage, the purpose changes from running hospital operations to supporting analytics, AI, reporting, and decision-making.
 
-In this design, the boundary lies at the **data pipeline layer**, where operational data is replicated or streamed into analytical systems without affecting transactional performance.
-
----
+Thus, OLTP is where the hospital runs its daily work, and OLAP is where the hospital analyzes that data for insights, forecasting, semantic search, and management reporting.
 
 ## Trade-offs
 
-One major trade-off in this architecture is **increased system complexity**. Using multiple storage systems (Data Warehouse, Vector DB, Data Lake) improves functionality but also increases maintenance, integration effort, and operational overhead.
+In this design, the **transactional system (OLTP)** ends at the hospital’s operational systems such as **EHR/EMR, lab systems, billing systems, and ICU monitoring systems**. These systems are responsible for recording day-to-day transactions such as diagnoses, medication updates, lab entries, admissions, discharges, and billing activity.
 
-To mitigate this, the system can adopt a **unified orchestration layer** using tools like data pipelines and workflow managers. Additionally, implementing a **Data Lakehouse approach** can reduce fragmentation by combining data lake flexibility with warehouse-like structure.
+The **analytical system (OLAP)** begins after data is extracted through batch ETL or real-time ingestion pipelines and moved into the **Data lakehouse, warehouse, vector database, and time-series database**. At this stage, the purpose changes from running hospital operations to supporting analytics, AI, reporting, and decision-making.
 
-Another mitigation strategy is **clear data governance and schema management**, ensuring consistency across systems. Monitoring tools and automation can also help reduce manual effort and errors.
-
-Overall, while the architecture introduces complexity, it provides scalability, flexibility, and advanced capabilities required for modern healthcare systems.
+So, in simple terms, OLTP is where the hospital runs its daily work, and OLAP is where the hospital analyzes that data for insights, forecasting, semantic search, and management reporting.
