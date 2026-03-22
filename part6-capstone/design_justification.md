@@ -20,8 +20,7 @@ Thus, OLTP is where the hospital runs its daily work, and OLAP is where the hosp
 
 ## Trade-offs
 
-In this design, the **transactional system (OLTP)** ends at the hospital’s operational systems such as **EHR/EMR, lab systems, billing systems, and ICU monitoring systems**. These systems are responsible for recording day-to-day transactions such as diagnoses, medication updates, lab entries, admissions, discharges, and billing activity.
+Major trade-off in this design is **increased complexity**. Instead of using one single database, the architecture uses multiple systems: warehouse, vector database, lakehouse, and time-series database. This improves performance and suitability for each use case, but it also makes the system harder to manage, integrate, secure, and maintain.
 
-The **analytical system (OLAP)** begins after data is extracted through batch ETL or real-time ingestion pipelines and moved into the **Data lakehouse, warehouse, vector database, and time-series database**. At this stage, the purpose changes from running hospital operations to supporting analytics, AI, reporting, and decision-making.
+I would mitigate this by using a strong **data governance and orchestration layer**. That includes standardized data pipelines, clear ownership of each storage system, data quality checks, consistent patient identifiers, and role-based security controls. I would also define which system is the source of truth for each type of data. This reduces confusion and keeps the architecture manageable while still benefiting from the strengths of specialized systems.
 
-Thus, OLTP is where the hospital runs its daily work, and OLAP is where the hospital analyzes that data for insights, forecasting, semantic search, and management reporting.
