@@ -24,4 +24,4 @@ In this design, the **transactional system (OLTP)** ends at the hospital’s ope
 
 The **analytical system (OLAP)** begins after data is extracted through batch ETL or real-time ingestion pipelines and moved into the **Data lakehouse, warehouse, vector database, and time-series database**. At this stage, the purpose changes from running hospital operations to supporting analytics, AI, reporting, and decision-making.
 
-So, in simple terms, OLTP is where the hospital runs its daily work, and OLAP is where the hospital analyzes that data for insights, forecasting, semantic search, and management reporting.
+Thus, OLTP is where the hospital runs its daily work, and OLAP is where the hospital analyzes that data for insights, forecasting, semantic search, and management reporting.
